@@ -25,10 +25,10 @@ import text.NotNullStrings.*
   *   - possibly a number of expectations when it is the outcome of several checks (this is used for the reporting of
   *     ScalaCheck properties).
   */
-sealed abstract class Result(val message: String = "", val expected: String = "", val expectationsNb: Int = 1)
+sealed abstract class Result(val message: String = "", val expected: String = "", _expectationsNb: Int = 1)
     derives CanEqual:
   type SelfType <: Result
-
+  val expectationsNb: Int = _expectationsNb
   /** @return
     *   the colored textual status of the result
     */
