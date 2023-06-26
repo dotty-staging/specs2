@@ -11,6 +11,8 @@ import Result.*
 /** This trait is for transforming matchers of values to matchers of Futures
   */
 trait FutureMatchers extends ExpectationsCreation:
+  import FutureMatchers.*
+
   /** add an `await` method to any matcher `Matcher[T]` so that it can be transformed into a `Matcher[Future[T]] making
     * this implicit an extension method does not work out of the box`
     */
@@ -63,25 +65,24 @@ trait FutureMatchers extends ExpectationsCreation:
           case t: Throwable =>
             createExpectable(throw t).applyMatcher(m)
 
-object FutureMatchers extends FutureMatchers
+object FutureMatchers extends FutureMatchers:
+  private[FutureMatchers] class FutureAsResult[T](f: =>Future[T])(using ee: ExecutionEnv, asResult: AsResult[T]):
+    def await: Result =
+      await(retries = 0, timeout = 1.second)
 
-private[specs2] class FutureAsResult[T](f: =>Future[T])(using ee: ExecutionEnv, asResult: AsResult[T]):
-  def await: Result =
-    await(retries = 0, timeout = 1.second)
+    def retry(retries: Int): Result =
+      await(retries, timeout = 1.second)
 
-  def retry(retries: Int): Result =
-    await(retries, timeout = 1.second)
+    def awaitFor(timeout: FiniteDuration): Result =
+      await(retries = 0, timeout)
 
-  def awaitFor(timeout: FiniteDuration): Result =
-    await(retries = 0, timeout)
-
-  def await(retries: Int, timeout: FiniteDuration): Result =
-    futureAwait(f)(retries, timeout).fold(
-      timedout =>
-        checkResultFailure(
-          Failure(
-            s"Timeout after ${timedout.totalDuration + timedout.appliedTimeout} (retries = $retries, timeout = $timeout), timeFactor = ${timedout.timeFactor}"
-          )
-        ),
-      t => asResult.asResult(t)
-    )
+    def await(retries: Int, timeout: FiniteDuration): Result =
+      futureAwait(f)(retries, timeout).fold(
+        timedout =>
+          checkResultFailure(
+            Failure(
+              s"Timeout after ${timedout.totalDuration + timedout.appliedTimeout} (retries = $retries, timeout = $timeout), timeFactor = ${timedout.timeFactor}"
+            )
+          ),
+        t => asResult.asResult(t)
+      )
