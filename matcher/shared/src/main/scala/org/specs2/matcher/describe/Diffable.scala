@@ -41,6 +41,12 @@ object Diffable extends DiffableLowImplicits:
   given floatDiffable: Diffable[Float] = primitive
   given doubleDiffable: Diffable[Double] = primitive
 
+  // scala collections
+  given mapDiffable[K: Diffable, V: Diffable, M <: Map[K, V]]: Diffable[M] = new MapDiffable[K, V, M]
+  given setDiffable[E: Diffable, S <: Set[E]]: Diffable[S] = new SetDiffable[E, S]
+  given seqDiffable[E: Diffable, S <: Seq[E]]: Diffable[S] = new SeqLinesDiffable[E, S]
+  given arrayDiffable[E: Diffable]: Diffable[Array[E]] = new ArrayDiffable
+
   // basic elements
   given stackTraceElementDiffable: Diffable[StackTraceElement] = new StackTraceElementDiffable
   given exceptionDiffable[T <: Throwable]: Diffable[T] = new ThrowableDiffable[T]
@@ -53,12 +59,6 @@ object Diffable extends DiffableLowImplicits:
 
   given tryDiffable[T: Diffable, S <: Try[T]]: Diffable[S] = new TryDiffable[T, S]
   given failureDiffable: Diffable[Failure[Nothing]] = new FailureDiffable
-
-  // scala collections
-  given mapDiffable[K: Diffable, V: Diffable, M <: Map[K, V]]: Diffable[M] = new MapDiffable[K, V, M]
-  given setDiffable[E: Diffable, S <: Set[E]]: Diffable[S] = new SetDiffable[E, S]
-  given seqDiffable[E: Diffable, S <: Seq[E]]: Diffable[S] = new SeqLinesDiffable[E, S]
-  given arrayDiffable[E: Diffable]: Diffable[Array[E]] = new ArrayDiffable
 
 trait DiffableLowImplicits extends DiffableLowImplicits2:
   given optionDiffable[T: Diffable, S <: Option[T]]: Diffable[S] = new OptionDiffable[T, S]
