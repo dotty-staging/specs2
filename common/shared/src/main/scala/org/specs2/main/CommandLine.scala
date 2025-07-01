@@ -131,7 +131,7 @@ object CommandLine extends Extract:
       case name :: value :: rest =>
         findArgument(name) match {
           case Some(BooleanArgument(_)) =>
-            if (FromString[Boolean].fromString(value).isDefined) unknownArguments(rest)
+            if FromString[Boolean].fromString(value).isDefined then unknownArguments(rest)
             else unknownArguments(value :: rest)
           case Some(ValuedArgument(_)) =>
             unknownArguments(rest)
