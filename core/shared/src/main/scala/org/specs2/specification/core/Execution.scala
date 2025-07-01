@@ -149,7 +149,7 @@ case class Execution(
           val future = timedFuture.runFuture(env.executionEnv, to).recoverWith {
             // this exception is thrown if the `action()` code above throws an exception
             case e: ExecutionException =>
-              if (NonFatal(e.getCause))
+              if NonFatal(e.getCause) then
                 Future.successful((ResultExecution.handleExceptionsPurely(e.getCause), timer.stop))
               else
                 Future.failed(FatalExecution(e.getCause))
