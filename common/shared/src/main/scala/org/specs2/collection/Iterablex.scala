@@ -59,7 +59,7 @@ trait Iterablex:
         case (a: GenIterable[?], b: GenIterable[?]) =>
           (a.nonEmpty && b.nonEmpty) && {
             val (x, y, resta, restb) = (a.head, b.head, a.drop(1), b.drop(1))
-            matchTwo(x, y) && resta.sameElementsAs(restb, f) ||
+            matchTwo(x, y) && this.sameElementsAs[T](resta)(restb, f) ||
             resta.exists(matchTwo(_, y)) && restb.exists(matchTwo(x, _)) &&
             resta.toSeq.removeFirst(matchTwo(_, y)).sameElementsAs(restb.toSeq.removeFirst(matchTwo(x, _)), f)
           }
