@@ -1,6 +1,9 @@
 package org.specs2
 package main
 
+import text.NotNullStrings.*
+
+
 class SystemPropertiesSpec extends Specification {
   def is = s2"""
 
@@ -48,8 +51,8 @@ Get as
   def getIfElse1 = sp(colors).getIfElse("whitebg", 1)(2) must ===(1)
   def getIfElse2 = sp(colors).getIfElse("whitebgxxx", 1)(2) must ===(2)
 
-  case class props(properties: (String, String)*) extends SystemProperties:
-    override def systemGetProperty(p: String) = Map(properties*).get(p)
+  case class props(properties: (String, String | Null)*) extends SystemProperties:
+    override def systemGetProperty(p: String): Option[String] = Map(properties*).get(p).map(notNull)
 
   def getAs1 =
     props("specs2.color" -> null).getPropertyAs[Boolean]("color") must beNone

@@ -96,7 +96,7 @@ trait Throwablex:
     new StackTraceElement(m, className, fileName, lineNumber)
 
   /** @return an exception with the given message and stacktrace */
-  def exception(m: String, st: Seq[StackTraceElement], cause: Throwable = null): Exception =
+  def exception(m: String, st: Seq[StackTraceElement], cause: Throwable | Null = null): Exception =
     val exception = new Exception(m, cause)
     exception.setStackTrace(st.toArray)
     exception

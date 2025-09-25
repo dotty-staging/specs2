@@ -21,7 +21,7 @@ It is also possible to display the class of elements in a collection
   for a Map $withClass5
 
 """
-  def nullString = (null: String).notNull must ===("null")
+  def nullString = (null: String | Null).notNull must ===("null")
 
   def noToStringDefined =
     case class L(values: Seq[Int]) extends Seq[Int]:
